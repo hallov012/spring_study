@@ -290,3 +290,66 @@ class MemberServiceTest {
     }
 }
 ```
+
+## 스프링 빈과 의존관계
+### 스프링 빈을 등록하고, 의존관계 설정하기
+회원 컨트롤러가 회원 서비스와 회원 리포지토리를 사용할 수 있도록 의존관계를 설정한다.
+**스프링 빈을 등록하는 2가지 방법**</br>
+- 컴포넌트 스캔과 자동 의존관계 설정
+- 자바 코드로 직접 스프링 빈 등록하기</br>
+
+**컴포넌트 스캔과 자동 의존관계 설정**</br>
+- `@Component` 어노테이션이 있으면 스프링 빈으로 자동 등록된다.
+- `@Controller`, `@Service`, `@Repository`는 `@Component`를 포함하고 있으므로 스프링 빈으로 자동 등록된다.
+- 메인 애플리케이션(`hello.hello_spring`)이 있는 패키지 하위에 있는 모든 컴포넌트를 스캔한다. (다른 곳에 등록된 경우는 스캔하지 않음)
+```java
+@Controller
+public class MemberController {
+    private final MemberService memberService;
+
+    @Autowired
+    public MemberController(MemberService memberService) {
+        this.memberService = memberService;
+    }
+}
+```
+
+![img_5.png](README_images/img_5.png)
+* `memberService`와 `memberRepository`는 스프링 빈으로 등록되어 있어야 한다.
+* `@Controller`, `@Service`, `@Repository` 등을 사용하면 스프링 빈으로 자동 등록된다.
+> 참고: 스프링은 스프링 컨테이너에 스프링 빈을 등록할 때 싱글톤으로 등록한다. 따라서 같은 스프링 빈이면 모두 같은 인스턴스다. 설정으로 싱글톤이 아니게 설정할 수 있지만, 특별한 경우를 제외하면 대부분 싱글톤을 사용한다.</br> 
+
+**자바 코드로 직접 스프링 빈 등록하기**</br>
+- 회원 서비스와 회원 리포지토리를 직접 스프링 빈으로 등록하고, 의존관계를 설정한다.
+- `@Service`, `@Repository`, `@Autowired`를 사용하지 않고 직접 설정한다.
+```java
+// hello.hello_spring.SpringConfig.java
+package hello.hello_spring;
+
+import hello.hello_spring.repository.MemberRepository;
+import hello.hello_spring.repository.MemoryMemberRepository;
+import hello.hello_spring.service.MemberService;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+
+@Configuration
+public class SpringConfig {
+
+    @Bean
+    public MemberService memberService() {
+        return new MemberService(memberRepository());
+    }
+
+    @Bean
+    public MemberRepository memberRepository() {
+        return new MemoryMemberRepository();
+    }
+}
+```
+**예제의 경우 향후 메모리 리포지터리를 다른 리포지터리로 변경할 예정이마르, 컴포넌트 방식 대신 직접 스프링 빈으로 등록하는 방식을 사용한다.**
+> 참고: DI(Dependency Injection)에는 필드 주입, setter 주입, 생성자 주입 이렇게 3가지 방식이 있다.</br>
+> 의존관계가 실행 중에 동적으로 변하는 경우는 거의 업기 때문에 **생성자 주입**을 권장한다.</br>
+
+> 참고: 실무에서는 주로 정형화된 컨트롤러, 서비스, 레파지토리 같은 코드는 컴포넌트 스캔을 사용한다. 그리고 정형화 되지 않거나, 상황에 따라 구현 클래스를 변경해야 하는 경우에는 설정을 통해 스프링 빈으로 등록한다.
+
+> 참고: `@Autowired`를 통한 DI는 `hello.hello_spring` 패키지 이하에서만 동작한다. 따라서 `SpringConfig` 클래스를 만들어서 직접 스프링 빈을 등록하고, 의존관계를 설정한다.

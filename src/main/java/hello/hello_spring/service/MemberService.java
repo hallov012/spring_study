@@ -3,10 +3,13 @@ package hello.hello_spring.service; // respository와 domain을 사용해 실제
 import hello.hello_spring.domain.Member;
 import hello.hello_spring.repository.MemberRepository;
 import hello.hello_spring.repository.MemoryMemberRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
 
+//@Service // 스프링이 MemberService를 생성해서 스프링 컨테이너에 넣어둠
 public class MemberService {
 
     // 테스트 생성 단축어 Mac: command + shift + t, Window: ctrl + shift + t
@@ -16,6 +19,7 @@ public class MemberService {
     /**
      * Test에서도 동일한 MemoryMemberRepository를 사용하기 위해 생성자를 통해 외부에서 넣어줌
      */
+//    @Autowired
     public MemberService(MemberRepository memberRepository) {
         this.memberRepository = memberRepository;
     }
