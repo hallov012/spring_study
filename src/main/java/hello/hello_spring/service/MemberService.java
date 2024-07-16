@@ -5,11 +5,13 @@ import hello.hello_spring.repository.MemberRepository;
 import hello.hello_spring.repository.MemoryMemberRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
 
 //@Service // 스프링이 MemberService를 생성해서 스프링 컨테이너에 넣어둠
+@Transactional
 public class MemberService {
 
     // 테스트 생성 단축어 Mac: command + shift + t, Window: ctrl + shift + t
